@@ -84,12 +84,27 @@ def reduce_puzzle(sdict):
         stalled = solved_values_before == solved_values_after
         if len([(key, val) for key, val in odict.items() if len(val) == 0]): return False
     return sdict
+
+def search(sdict):
+    rdict = reduce_puzzle(sdict)
+    if not rdict: return False
+    if all(len(val) == 1 for _, val in rdict.items()): return rdict
+    n, s = min(len(val), val) for _, val in rdict.items() if len(val) > 1)
+    for value in rdict[s]:
+        new_sudoku = rdict.copy()
+        new_sudoku[s] = value
+        attempt = search(new_sudoku[s])
+        if attempt: return attempt
+
         
 if __name__ == "__main__":
     sdict = grid_values(SUDOKU_STRING)
     eliminated_dict = eliminate(sdict)
     only_dict = only_choice(eliminated_dict)
     reduce_puzzle(only_dict)
+
+
+
 # def display(sudoku_dictionary, unit_list):
 #     """ MAKE IT LOOK LIKE THIS
 #         . . 3 |. 2 . |6 . . 
