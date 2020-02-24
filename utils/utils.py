@@ -4,7 +4,8 @@ import functools
 import operator
 ROWS = "ABCDEFGHI"
 COLS = "123456789"
-SUDOKU_STRING = "..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3.."
+SUDOKU_STRING1 = "..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3.."
+SUDOKU_STRING2 = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
 
 
 
@@ -88,20 +89,27 @@ def reduce_puzzle(sdict):
 def search(sdict):
     rdict = reduce_puzzle(sdict)
     if not rdict: return False
-    if all(len(val) == 1 for _, val in rdict.items()): return rdict
-    n, s = min(len(val), val) for _, val in rdict.items() if len(val) > 1)
-    for value in rdict[s]:
-        new_sudoku = rdict.copy()
-        new_sudoku[s] = value
-        attempt = search(new_sudoku[s])
+    if all(len(val) == 1 for _, val in rdict.items()): return True
+    # GET THE MINIMUM KEY, VAL
+    key, val = min((key, val) for key, val in rdict.items() if len(val) > 1)
+    # ITERATE OVER IT
+    for v in val:
+        new_sudoku = sdict.copy()
+        new_sudoku[key] = v
+        attempt = search(new_sudoku)
         if attempt: return attempt
+
+
+
+
+
 
         
 if __name__ == "__main__":
-    sdict = grid_values(SUDOKU_STRING)
+    sdict = grid_values(SUDOKU_STRING2)
     eliminated_dict = eliminate(sdict)
     only_dict = only_choice(eliminated_dict)
-    reduce_puzzle(only_dict)
+    print(search(only_dict))
 
 
 
